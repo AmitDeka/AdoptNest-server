@@ -62,7 +62,9 @@ exports.getPetsByCategory = async (req, res) => {
 
   try {
     const pets = await Pet.find({ category: categoryId, status: "accepted" })
-      .populate("category", "name icon")
+      .select("-description -contactPhone -contactEmail -contactWhatsApp")
+      .populate("createdBy", "name")
+      .populate("category", "name")
       .sort({ createdAt: -1 });
 
     res.status(200).json({ pets });

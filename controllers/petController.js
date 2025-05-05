@@ -160,7 +160,7 @@ exports.getRecentPets = async (req, res) => {
   try {
     const pets = await Pet.find({ status: "accepted" })
       .select("-description -contactPhone -contactEmail -contactWhatsApp")
-      .populate("createdBy", "name email")
+      .populate("createdBy", "name")
       .populate("category", "name")
       .sort({ createdAt: -1 })
       .limit(10);
