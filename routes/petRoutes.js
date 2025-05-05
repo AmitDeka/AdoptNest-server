@@ -17,7 +17,7 @@ router.post(
 
 // GET - Get all pets
 router.get(
-  "/get-all-pets",
+  "/admin/all",
   isAuthenticated,
   checkRole(["admin"]),
   petController.getAllPets
@@ -25,7 +25,7 @@ router.get(
 
 // GET - Get all pending pets
 router.get(
-  "/get-pending",
+  "/admin/pending",
   isAuthenticated,
   checkRole(["admin"]),
   petController.getPendingPets
@@ -33,16 +33,19 @@ router.get(
 
 // GET - Get all declined pets
 router.get(
-  "/get-declined",
+  "/admin/declined",
   isAuthenticated,
   checkRole(["admin"]),
   petController.getDeclinedPets
 );
 
 // GET - Get all accepted pets
-router.get("/pets", petController.getAcceptedPets);
+router.get("/all", petController.getAcceptedPets);
+
+// GET - Get recent 10 accepted pets
+router.get("/home", petController.getRecentPets);
 
 // POST - Admin validate pet submission
-router.post("/validate/:id", petController.validatePet);
+router.post("/admin/validate/:id", petController.validatePet);
 
 module.exports = router;

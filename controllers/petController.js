@@ -155,6 +155,22 @@ exports.getAcceptedPets = async (req, res) => {
   }
 };
 
+// Get 10 most recent accepted pets with category name
+exports.getRecentPets = async (req, res) => {
+  try {
+    const pets = await Pet.find({ status: "accepted" })
+      .select("-description -contactPhone -contactEmail -contactWhatsApp")
+      .populate("createdBy", "name email")
+      .populate("category", "name")
+      .sort({ createdAt: -1 })
+      .limit(10);
+
+    res.status(200).json(pets);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 // Admin validates pet submission (accept or decline)
 exports.validatePet = async (req, res) => {
   const status = req.body.status?.toLowerCase();
