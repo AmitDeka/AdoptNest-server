@@ -2,6 +2,7 @@ const Banner = require("../models/BannerModel");
 const Category = require("../models/CategoryModel");
 const Pet = require("../models/PetModel");
 const User = require("../models/UserModel");
+const mongoose = require("mongoose");
 
 // Get Banner
 exports.getBanner = async (req, res) => {
@@ -58,10 +59,13 @@ exports.getPetDetails = async (req, res) => {
 
 // Get Pet by category
 exports.getPetsByCategory = async (req, res) => {
-  const { categoryId } = req.params;
+  const { id: categoryId } = req.params;
 
   try {
-    const pets = await Pet.find({ category: categoryId, status: "accepted" })
+    const pets = await Pet.find({
+      category: new mongoose.Types.ObjectId(categoryId),
+      status: "accepted",
+    })
       .select("-description -contactPhone -contactEmail -contactWhatsApp")
       .populate("createdBy", "name")
       .populate("category", "name")
