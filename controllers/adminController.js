@@ -68,13 +68,15 @@ exports.deleteBanner = async (req, res) => {
 // Create category
 exports.createCategory = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, description } = req.body;
 
-    if (!name) {
+    if (!name || !description) {
       if (req.file) {
         fs.unlink(req.file.path, (err) => {});
       }
-      return res.status(400).json({ message: "Category name is required." });
+      return res
+        .status(400)
+        .json({ message: "Category name and description is required." });
     }
 
     if (!req.file) {
@@ -95,6 +97,7 @@ exports.createCategory = async (req, res) => {
 
     const category = new Category({
       name,
+      description,
       icon: {
         url: result.secure_url,
         public_id: result.public_id,
@@ -170,7 +173,7 @@ exports.createCategory = async (req, res) => {
 exports.updateCategory = async (req, res) => {
   try {
     const categoryId = req.params.id;
-    const { name } = req.body;
+    const { name, description } = req.body;
 
     const category = await Category.findById(categoryId);
     if (!category) {
@@ -179,8 +182,12 @@ exports.updateCategory = async (req, res) => {
 
     let updated = false;
 
-    if (name && name !== category.name) {
+    if (
+      (name && name !== category.name) ||
+      description !== category.description
+    ) {
       category.name = name;
+      category.description = description;
       updated = true;
     }
 

@@ -24,6 +24,19 @@ exports.getCategories = async (req, res) => {
   }
 };
 
+// Get Category info by ID
+exports.getCategoryById = async (req, res) => {
+  const categoryId = req.params.id;
+  try {
+    const category = await Category.findById(categoryId).sort({
+      createdAt: -1,
+    });
+    res.status(200).json({ data: category });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // Get Pet details
 exports.getPetDetails = async (req, res) => {
   const petId = req.params.id;
