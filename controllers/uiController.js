@@ -31,7 +31,7 @@ exports.getCategoryById = async (req, res) => {
     const category = await Category.findById(categoryId).sort({
       createdAt: -1,
     });
-    res.status(200).json({ data: category });
+    res.status(200).json({ category });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
