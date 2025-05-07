@@ -73,18 +73,34 @@ exports.getPetDetails = async (req, res) => {
 // Get Pet by category
 exports.getPetsByCategory = async (req, res) => {
   const { id: categoryId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = 20;
+  const skip = (page - 1) * limit;
 
   try {
-    const pets = await Pet.find({
-      category: new mongoose.Types.ObjectId(categoryId),
-      status: "accepted",
-    })
-      .select("-description -contactPhone -contactEmail -contactWhatsApp")
-      .populate("createdBy", "name")
-      .populate("category", "name")
-      .sort({ createdAt: -1 });
+    const [pets, total] = await Promise.all([
+      Pet.find({
+        category: new mongoose.Types.ObjectId(categoryId),
+        status: "accepted",
+      })
+        .select("-description -contactPhone -contactEmail -contactWhatsApp")
+        .populate("createdBy", "name")
+        .populate("category", "name")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit),
+      Pet.countDocuments({
+        category: new mongoose.Types.ObjectId(categoryId),
+        status: "accepted",
+      }),
+    ]);
 
-    res.status(200).json({ pets });
+    res.status(200).json({
+      pets,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalPets: total,
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -97,7 +113,11 @@ exports.getAcceptedPetsGroupedByCategory = async (req, res) => {
 
     const data = await Promise.all(
       categories.map(async (cat) => {
-        const pets = await Pet.find({ category: cat._id, status: "accepted" });
+        const pets = await Pet.find({ category: cat._id, status: "accepted" })
+          .select("-description -contactPhone -contactEmail -contactWhatsApp")
+          .populate("createdBy", "name")
+          .sort({ createdAt: -1 })
+          .limit(10);
 
         if (pets.length === 0) return null;
 
