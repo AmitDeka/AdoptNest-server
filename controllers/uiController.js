@@ -43,11 +43,9 @@ exports.getPetDetails = async (req, res) => {
 
   try {
     const pet = await Pet.findById(petId).populate("category", "name icon");
-
     if (!pet) {
       return res.status(404).json({ message: "Pet not found" });
     }
-
     const petData = pet.toObject();
 
     // Only include creator info if user is logged in
