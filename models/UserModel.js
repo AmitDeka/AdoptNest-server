@@ -48,8 +48,8 @@ const userSchema = new mongoose.Schema({
       ref: "Pet",
     },
   ],
-  phone: { type: String, required: true },
-  whatsapp: { type: String, required: true },
+  phone: { type: String },
+  whatsapp: { type: String },
   whatsappVerified: { type: Boolean, default: false },
   role: {
     type: String,
