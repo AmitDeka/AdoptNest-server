@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
       validator: function (v) {
         return v && v.trim().split(/\s+/).length >= 2;
       },
-      message: "Name must contain at least two words.",
+      message:
+        "Please enter your full name. It must contain at least two words (e.g., John Doe).",
     },
   },
   email: {
