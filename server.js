@@ -42,9 +42,11 @@ app.use(
     }),
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: isProd,
+      // secure: isProd,
+      secure: false,
       httpOnly: true,
-      sameSite: isProd ? "none" : "lax",
+      // sameSite: isProd ? "none" : "lax",
+      sameSite: "lax",
     },
   })
 );
