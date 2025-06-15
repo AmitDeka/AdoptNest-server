@@ -6,6 +6,8 @@ const passport = require("passport");
 const cors = require("cors");
 const MongoStore = require("connect-mongo");
 
+const isProd = process.env.NODE_ENV === "production";
+
 require("./auth/google");
 require("./auth/local");
 
@@ -40,8 +42,9 @@ app.use(
     }),
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      secure: isProd,
+      httpOnly: true,
+      sameSite: isProd ? "none" : "lax",
     },
   })
 );
