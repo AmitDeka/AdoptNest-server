@@ -21,7 +21,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: ["http://localhost:3000", ""],
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -40,7 +40,8 @@ app.use(
     }),
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     },
   })
 );
