@@ -24,7 +24,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: isProd ? "https://adopt-nest.vercel.app" : "http://localhost:3000",
+    origin: "https://adopt-nest.vercel.app",
     credentials: true,
   })
 );
@@ -44,15 +44,9 @@ app.use(
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       httpOnly: true,
-      secure: isProd,
-      sameSite: isProd ? "none" : "lax",
+      secure: true,
+      sameSite: "none",
     },
-    // cookie: {
-    //   maxAge: 7 * 24 * 60 * 60 * 1000,
-    //   httpOnly: true,
-    //   secure: true,
-    //   // sameSite: "lax",
-    // },
   })
 );
 app.use(passport.initialize());
@@ -60,10 +54,13 @@ app.use(passport.session());
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
-  const User = require("./models/UserModel");
-  User.findById(id)
-    .then((user) => done(null, user))
-    .catch(done);
+  try {
+    const User = require("./models/UserModel");
+    const user = await User.findById(id).select("-password");
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
 });
 
 // Connect to MongoDB
