@@ -6,6 +6,7 @@ const passport = require("passport");
 const cors = require("cors");
 const MongoStore = require("connect-mongo");
 
+const SESSION_SECRET = process.env.SESSION_SECRET || "keyboard warrior cat";
 const isProd = process.env.NODE_ENV === "production";
 
 require("./auth/google");
@@ -23,7 +24,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://adoptnest-client.onrender.com",
+    origin: isProd ? "https://adopt-nest.vercel.app" : "http://localhost:3000",
     credentials: true,
   })
 );
@@ -33,7 +34,7 @@ app.use(express.json());
 // Session (required for Passport)
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "keyboard cat",
+    secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
@@ -42,10 +43,16 @@ app.use(
     }),
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      secure: true,
       httpOnly: true,
-      sameSite: "none",
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
     },
+    // cookie: {
+    //   maxAge: 7 * 24 * 60 * 60 * 1000,
+    //   httpOnly: true,
+    //   secure: true,
+    //   // sameSite: "lax",
+    // },
   })
 );
 app.use(passport.initialize());
