@@ -24,7 +24,7 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://adopt-nest.vercel.app",
+    origin: "https://adoptnest-client.onrender.com",
     credentials: true,
   })
 );
